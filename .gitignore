@@ -1,3 +1,20 @@
-SampleMVC+Auth
+*.class
+*.jar
+
+# Eclipse
+.classpath
+.project
+.settings/
+
+# Intellij
+.idea/
+*.iml
+*.iws
+
+# Mac
 .DS_Store
-Skeleton+Auth
+
+# Maven
+log/
+target/
+
