@@ -6,8 +6,16 @@
 
 <c:import url="template/header.jsp" />
 
-<h1>${message}</h1>
+<h1>User #${user.id} (${user.firstName} ${user.lastName})</h1>
 
-
+<p>E-Mail: ${user.email}</p>
+<p><c:choose>
+<c:when test="${user.team != null}">
+Is member of the team ${user.team.teamname}
+</c:when>
+<c:otherwise>
+Isn't member of a team.
+</c:otherwise>
+</c:choose></p>
 
 <c:import url="template/footer.jsp" />

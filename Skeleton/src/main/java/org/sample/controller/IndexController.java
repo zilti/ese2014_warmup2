@@ -4,7 +4,9 @@ import javax.validation.Valid;
 
 import org.sample.controller.exceptions.InvalidUserException;
 import org.sample.controller.pojos.SignupForm;
+import org.sample.controller.pojos.TeamCreationForm;
 import org.sample.controller.service.SampleService;
+import org.sample.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -23,7 +25,9 @@ public class IndexController {
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView index() {
     	ModelAndView model = new ModelAndView("index");
-    	model.addObject("signupForm", new SignupForm());    	
+
+    	model.addObject("signupForm", new SignupForm());
+        model.addObject("teams", sampleService.getAllTeams());
         return model;
     }
 
@@ -34,6 +38,7 @@ public class IndexController {
             try {
             	sampleService.saveFrom(signupForm);
             	model = new ModelAndView("show");
+                model.addObject("message","Sign Up Complete!");
             } catch (InvalidUserException e) {
             	model = new ModelAndView("index");
             	model.addObject("page_error", e.getMessage());
@@ -43,10 +48,45 @@ public class IndexController {
         }   	
     	return model;
     }
+
+    @RequestMapping(value = "/new-team", method = RequestMethod.GET)
+    public ModelAndView newTeam() {
+        ModelAndView model = new ModelAndView("newTeam");
+        model.addObject("teamCreationForm", new TeamCreationForm());
+        return model;
+    }
+
+    @RequestMapping(value = "/create-team", method = RequestMethod.POST)
+    public ModelAndView createTeam(@Valid TeamCreationForm teamCreationForm, BindingResult result, RedirectAttributes redirectAttributes) {
+        ModelAndView model;
+        if(!result.hasErrors()) {
+            try {
+                sampleService.saveTeamFrom(teamCreationForm);
+                model = new ModelAndView("show");
+                model.addObject("message","Team creation complete!");
+            } catch (Exception e) {
+                model = new ModelAndView("newTeam");
+                model.addObject("page_error", e.getMessage());
+            }
+        }
+        else {
+            model = new ModelAndView("newTeam");
+        }
+        return model;
+    }
+
+    @RequestMapping(value = "/profile.jsp", method = RequestMethod.GET)
+    public ModelAndView profile(String userId) {
+        ModelAndView model = new ModelAndView("profile");
+        Long lUserId = Long.parseLong(userId);
+        User user = sampleService.getUser(lUserId);
+        model.addObject("user",user);
+        return model;
+    }
     
     @RequestMapping(value = "/security-error", method = RequestMethod.GET)
     public String securityError(RedirectAttributes redirectAttributes) {
-        redirectAttributes.addFlashAttribute("page_error", "You do have have permission to do that!");
+        redirectAttributes.addFlashAttribute("page_error", "You do not have permission to do that!");
         return "redirect:/";
     }
 

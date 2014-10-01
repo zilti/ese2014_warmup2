@@ -1,10 +1,6 @@
 package org.sample.model;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 
 
 @Entity
@@ -19,7 +15,10 @@ public class User {
     private String email;
     
     @OneToOne(cascade = {CascadeType.ALL})
-    private Address address; 
+    private Address address;
+
+    @ManyToOne
+    private Team team;
     
     public Long getId() {
         return id;
@@ -61,7 +60,8 @@ public class User {
 		this.address = address;
 	}
 
-    
+    public Team getTeam() {return team;}
+    public void setTeam(Team team) {this.team = team;}
 	
 	
 }
